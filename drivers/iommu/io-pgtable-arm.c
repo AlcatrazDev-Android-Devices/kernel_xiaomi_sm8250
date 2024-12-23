@@ -834,6 +834,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
 		if (!iopte_leaf(pte, lvl)) {
 			/* Also flush any partial walks */
 			ptep = iopte_deref(pte, data);
+			io_pgtable_tlb_flush_all(&data->iop);
 			__arm_lpae_free_pgtable(data, lvl + 1, ptep);
 		}
 
@@ -867,6 +868,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
 		if (!iopte_tblcnt(*ptep)) {
 			/* no valid mappings left under this table. free it. */
 			__arm_lpae_set_pte(ptep, 0, &iop->cfg);
+			io_pgtable_tlb_flush_all(&data->iop);
 			__arm_lpae_free_pgtable(data, lvl + 1, table_base);
 		}
 
